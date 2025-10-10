@@ -250,6 +250,9 @@ for obs in valid_paths_v2:
         # Observation made before the light leak
         outObsDir = outputDir + "/" + obsid
 
+        # change directory to outObsDir
+        os.chdir(outObsDir)
+
         # Create a log file to record the outputs of pipeline commands
         pipelineLog = outObsDir + "/pipeline_output.log"
         if Path(pipelineLog).exists() == False:
@@ -257,7 +260,6 @@ for obs in valid_paths_v2:
 
         
         clobber_parameter = "no"
-
         if (overwrite_files == False):
             os.system(f"rm -r {outObsDir}/*")
         else:
@@ -283,7 +285,7 @@ for obs in valid_paths_v2:
 
         # Run nicerl3-spect
         print("Running nicerl3-spect...")
-        nicerl3spect = "nicerl3-spect " + outObsDir + " mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " grouptype=optmin chatter=3 groupscale=10 bkgmodeltype=3c50 suffix=3c50 >> " + pipelineLog     
+        nicerl3spect = "nicerl3-spect . mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " grouptype=optmin chatter=3 groupscale=10 bkgmodeltype=3c50 suffix=3c50 >> " + pipelineLog     
         try:
             os.system(nicerl3spect)
             print("Finished nicerl3-spect.\n")
@@ -293,7 +295,7 @@ for obs in valid_paths_v2:
         
         # Run nicerl3-lc and create default resolution (1s) light curve
         print("Running nicerl3-lc...")
-        nicerl3lc = "nicerl3-lc " + outObsDir + " mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=50-1000 chatter=4 timebin=1 suffix=_50_1000_dt0 >> " + pipelineLog 
+        nicerl3lc = "nicerl3-lc . mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=50-1000 chatter=4 timebin=1 suffix=_50_1000_dt0 >> " + pipelineLog 
         try:
             os.system(nicerl3lc)
             print("Finished nicerl3-lc.")
@@ -305,7 +307,7 @@ for obs in valid_paths_v2:
         if createHighResLightCurves:
             for each in highResLcPiRanges:
                 each = each.replace(" ", "")
-                nicerl3lc = "nicerl3-lc " + outObsDir + " mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=" + str(each) + " timebin=" + str(2**highResLcTimeResInPwrTwo) +" suffix=_"+ str(each).replace("-", "_") + "_dt" + str(abs(highResLcTimeResInPwrTwo)).replace(".", "") + " >> " + pipelineLog
+                nicerl3lc = "nicerl3-lc . mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=" + str(each) + " timebin=" + str(2**highResLcTimeResInPwrTwo) +" suffix=_"+ str(each).replace("-", "_") + "_dt" + str(abs(highResLcTimeResInPwrTwo)).replace(".", "") + " >> " + pipelineLog
                 try:
                     os.system(nicerl3lc)
                 except:
@@ -326,6 +328,9 @@ for obs in valid_paths_v2:
         for obsTuple in lightleak_observations[obsid]:
             outObsDir = obsTuple[0]
             obsMode = obsTuple[1]
+
+            # change directory to outObsDir
+            os.chdir(outObsDir)
 
             # Create a log file to record the outputs of pipeline commands
             pipelineLog = outObsDir + "/pipeline_output.log"
@@ -369,7 +374,7 @@ for obs in valid_paths_v2:
 
             # Run nicerl3-spect
             print("Running nicerl3-spect...")
-            nicerl3spect = "nicerl3-spect " + outObsDir + " mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " grouptype=optmin groupscale=10 bkgmodeltype=3c50 suffix=3c50 >> " + pipelineLog
+            nicerl3spect = "nicerl3-spect . mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " grouptype=optmin groupscale=10 bkgmodeltype=3c50 suffix=3c50 >> " + pipelineLog
             try:
                 os.system(nicerl3spect)
                 print("Finished nicerl3-spect.\n")
@@ -379,7 +384,7 @@ for obs in valid_paths_v2:
             
             # Run nicerl3-lc and create default resolution (1s) light curve
             print("Running nicerl3-lc...")
-            nicerl3lc = "nicerl3-lc " + outObsDir + " mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=50-1000 timebin=1 suffix=_50_1000_dt0 >> " + pipelineLog
+            nicerl3lc = "nicerl3-lc . mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=50-1000 timebin=1 suffix=_50_1000_dt0 >> " + pipelineLog
             try:
                 os.system(nicerl3lc)
                 print("Finished nicerl3-lc.\n")
@@ -391,7 +396,7 @@ for obs in valid_paths_v2:
             if createHighResLightCurves:
                 for each in highResLcPiRanges:
                     each = each.replace(" ", "")
-                    nicerl3lc = "nicerl3-lc " + outObsDir + " mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=" + str(each) + " timebin=" + str(2**highResLcTimeResInPwrTwo) +" suffix=_"+ str(each).replace("-", "_") + "_dt" + str(abs(highResLcTimeResInPwrTwo)).replace(".", "") + " >> " + pipelineLog
+                    nicerl3lc = "nicerl3-lc . mkfile='$CLDIR/ni$OBSID.mkf' clobber=" + clobber_parameter + " pirange=" + str(each) + " timebin=" + str(2**highResLcTimeResInPwrTwo) +" suffix=_"+ str(each).replace("-", "_") + "_dt" + str(abs(highResLcTimeResInPwrTwo)).replace(".", "") + " >> " + pipelineLog
                     try:
                         os.system(nicerl3lc)
                     except Exception as e:
@@ -406,6 +411,8 @@ for obs in valid_paths_v2:
             fitLog = outObsDir +"/" + resultsFile
             if Path(fitLog).exists() == False:
                 os.system("touch " + fitLog)
+
+os.chdir(cwd)
 
 # Extract the paths, obsid and exposure of observations with exposure > 100 only.
 expo_processed_paths = []
