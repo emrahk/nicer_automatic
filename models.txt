@@ -1,0 +1,253 @@
+MODEL model_1
+
+load TBabs*pcfabs(gaussian+diskbb)
+assign diskbb.Tin:,,0.1,0.1,2.5,2.5 diskbb.norm:,,0.1,0.1 pcfabs.CvrFract:0.95
+search premodel
+assign gaussian.LineE:1.8,,1.6,1.6,1.9,1.9 gaussian.Sigma:0.07,,,,0.2,0.2 gaussian.norm:0.1
+
+setpoint fix
+
+fit
+save model
+ftest nullhyp
+
+addcomp edge after TBabs *
+assign edge.edgeE:1.8,,1.5,1.5,2,2 edge.MaxTau:0.2
+fit
+ftest nullhyp
+save model
+
+addcomp gaussian before diskbb + -wrap
+assign -last gaussian.LineE:6.98,,6.8,6.8,7.5,7.5 gaussian.Sigma:7e-2,,,,0.2,0.2 gaussian.norm:-1e-3,,-1e12,-1e12,-1e-12,-1e-12
+fit
+save model
+
+ftest perform
+
+fit
+ftest nullhyp
+
+addcomp gaussian before diskbb + -wrap
+assign -last gaussian.LineE:6.7,,6.4,6.4,6.8,6.8 gaussian.Sigma:0.07,,,,0.2,0.2 gaussian.norm:-1e-3,1e-4,-1e12,-1e12,-1e-12,-1e-12
+fit
+save model
+
+ftest perform
+
+fit
+ftest nullhyp
+
+addcomp powerlaw after diskbb + -wrap
+assign -last powerlaw.PhoIndex:1.8,,1.2,1.2,3,3 powerlaw.norm:0.1
+fit
+save model
+
+ftest perform
+
+fit
+
+if edge.MaxTau < 1e-4
+assign edge.MaxTau:0.1
+endif
+
+fit
+save model
+
+ENDMODEL
+#####################################################################################
+
+MODEL model_2
+load TBabs*powerlaw
+assign powerlaw.PhoIndex:2,,0.5,0.5 powerlaw.norm:1.5
+search premodel
+
+setpoint fix
+
+fit
+save model
+ftest nullhyp
+
+addcomp diskbb after powerlaw + -wrap
+assign diskbb.Tin:1.4 diskbb.norm:80
+search premodel
+
+if powerlaw.PhoIndex > 8
+assign powerlaw.PhoIndex:2 powerlaw.norm:1.5
+endif
+
+fit
+save model
+
+ftest perform
+
+fit
+save model
+
+ENDMODEL
+
+
+
+
+
+
+
+MODEL model_7
+load TBabs*edge*(nthComp+diskbb)
+
+
+assign edge.edgeE:1.84,0.01,1.5,1.6,2.0,2.0 edge.MaxTau:0.2,0.02,0.0,0.0,2.0,2.0
+assign TBabs.nH:0.1,,0.09,0.09,0.5,0.5
+assign diskbb.Tin:0.6,0.05,0.1,0.1,2.5,2.5 diskbb.norm:100,,1,1,1e5,1e6
+assign nthComp.kT_e:10,,5,5,200,200 nthComp.kT_bb:0.1,0.05,0.05,0.05,2.5,2.5 nthComp.norm:0.2,,1e-4,1e-4,1e3,1e4 
+
+
+search premodel
+setpoint fix
+fit
+save model
+ftest nullhyp
+
+addcomp gaussian after diskbb + -wrap
+assign -last gaussian.LineE:6.40,0.05,6.35,6.35,6.45,6.45 gaussian.Sigma:0.2,0.01,0.01,0.01,0.7,0.7 gaussian.norm:1e-4,1e-5,1e-8,1e-8,1e-2,1e-1
+fit
+save model
+
+ftest nullhyp
+
+
+
+
+
+fit
+save model
+
+ENDMODEL
+
+
+
+
+
+
+MODEL model_hard
+load TBabs*edge*(nthComp+diskbb)
+
+
+assign edge.edgeE:1.84,,1,1,2,2 edge.MaxTau:0.2,,0.02,0.02,2.0,2.0
+assign TBabs.nH:3.0
+assign diskbb.Tin:0.6,0.05,0.1,0.1,2.5,2.5 diskbb.norm:150,,15,15,1e5,1e6
+assign nthComp.kT_e:100,,100,100,100,100  nthComp.norm:0.2,,1e-4,1e-4,1e3,1e4  nthComp.inp_type:1 nthComp.Gamma:1.7,,1.5,1.5,3.5,3.5
+
+
+search premodel
+setpoint fix
+fit
+save model
+ftest nullhyp
+
+
+
+
+
+fit
+save model
+
+ENDMODEL
+
+
+
+MODEL model_hims_decay
+load TBabs*edge*(nthComp+diskbb)
+
+assign edge.edgeE:1.84,0.01,1.1,1.1,2.0,2.0 edge.MaxTau:0.2,0.02,0.0,0.0,2.0,2.0
+assign TBabs.nH:0.061,,0.061,0.061,0.061,0.061
+assign diskbb.Tin:0.6,0.05,0.1,0.1,2.5,2.5 diskbb.norm:150,,15,15,1e5,1e6
+assign nthComp.kT_e:100,,100,100,100,100  nthComp.norm:0.2,,1e-4,1e-4,1e3,1e4  nthComp.inp_type:1 nthComp.Gamma:1.7,,1.5,1.5,4.5,4.5
+
+
+search premodel
+setpoint fix
+fit
+save model
+ftest nullhyp
+
+
+fit
+save model
+
+ENDMODEL
+
+
+MODEL model_soft
+load TBabs*edge*(nthComp+diskbb+gaussian)
+
+assign edge.edgeE:1.5,,0.8,0.8,2,2 edge.MaxTau:0.2,0.02,0.0,0.0,2.0,2.0
+assign TBabs.nH:5.4,,5.0,5.0,6.0,6.0
+assign diskbb.Tin:0.6,0.05,0.1,0.1,2.5,2.5 diskbb.norm:100,,1,1,1e5,1e6
+assign nthComp.kT_e:100,,100,100,100,100  nthComp.norm:0.2,,0.1,0.1,1e3,1e4  nthComp.inp_type:1  nthComp.Gamma:2.5,,1.7,1.7,4.5,4.5
+assign gaussian.LineE:2.45,0.02,1.5,1.5,3.0,3.0
+assign gaussian.Sigma:0.05,0.01,0.001,0.001,0.8,0.8
+assign gaussian.norm:1e-3,,0,0,1,1
+
+
+
+search premodel
+setpoint fix
+fit
+save model
+ftest nullhyp
+
+
+fit
+save model
+
+ENDMODEL
+
+
+MODEL model_hard_decay
+load TBabs*edge*(nthComp)
+
+
+assign edge.edgeE:1.84,,1.3,1.3,2,2 edge.MaxTau:0.2,,0.02,0.02,2.0,2.0
+assign TBabs.nH:0.061,,0.061,0.061,0.061,0.061
+
+assign nthComp.kT_e:100,,100,100,100,100  nthComp.norm:0.2,,1e-4,1e-4,1e3,1e4  nthComp.inp_type:0 nthComp.Gamma:1.7,,1.5,1.5,3.5,3.5 nthComp.kT_bb:0.2,,0.05,0.05,2.5,2.5
+
+search premodel
+setpoint fix
+fit
+save model
+ftest nullhyp
+
+
+
+
+
+fit
+save model
+
+ENDMODEL
+
+
+
+
+
+
+MODEL model_soft_simpl
+load TBabs*edge*(simpl*diskbb)
+
+assign edge.edgeE:1.84,,1.84,1.84,1.84,1.84 edge.MaxTau:0.2,0.02,0.0,0.0,2.0,2.0
+assign TBabs.nH:0.15,,0.15,0.15,0.15,0.15
+assign diskbb.Tin:0.6,0.05,0.1,0.1,2.5,2.5 diskbb.norm:100,,1,1,1e5,1e6
+assign simpl.Gamma:2.5,,1,1,5,5 simpl.FracSctr:0.01,,0.01,0.01,0.2,0.2 simpl.UpScOnly:1
+
+search premodel
+setpoint fix
+fit
+save model
+ftest nullhyp
+
+
+fit
+save model
+
+ENDMODEL
