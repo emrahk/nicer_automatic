@@ -1,4 +1,3 @@
- 
 # Authors: Batuhan Bahçeci
 # Contact: batuhan.bahceci@sabanciuniv.edu
 
@@ -426,6 +425,11 @@ for path, obsid, expo in searchedObservations:
                 fluxValuesDict[dict_key].append(par_list)
             else:
                 fluxValuesDict[dict_key] = [par_list]
+        else:
+            if dict_key in otherParsDict:
+                otherParsDict[dict_key].append(par_list)
+            else:
+                otherParsDict[dict_key] = [par_list]
 
 otherpars_ref = 0
 fluxes_ref = 0
@@ -618,8 +622,8 @@ if len(otherParsDict) != 0:
                     added_par_flag = True
 
                     table_columns[current_index].append(val[1])
-                    table_columns[current_index + 1].append(val[1] - val[2])
-                    table_columns[current_index + 2].append(val[1] + val[3])
+                    table_columns[current_index + 1].append(val[2])
+                    table_columns[current_index + 2].append(val[3])
                     break
             
             # If the flag has not been set to True, it means the current observation does not have the searched parameter of the column. Set values as "-"
